@@ -8,6 +8,7 @@ interface FinancialContextType {
   assumptions: Assumptions;
   results: CalculationResults | null;
   updateAssumptions: (newAssumptions: Assumptions) => void;
+  saveAssumptions: (assumptionsToSave: Assumptions) => void;
   recalculate: () => void;
 }
 
@@ -195,25 +196,33 @@ const defaultAssumptions: Assumptions = {
 };
 
 export function FinancialProvider({ children }: { children: ReactNode }) {
-  const [assumptions, setAssumptions] = useState<Assumptions>(defaultAssumptions);
-//  const [assumptions, setAssumptions] = useState<Assumptions>(() => {
-//  if (typeof window !== "undefined") {
-//    const saved = localStorage.getItem("assumptions");
-//    if (saved) return JSON.parse(saved);
-//  }
-//  return defaultAssumptions;
-//});
-//useEffect(() => {
-//  localStorage.setItem("assumptions", JSON.stringify(assumptions));
-//}, [assumptions]);
-
-//
+  const [assumptions, setAssumptions] = useState<Assumptions>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("tif_model_assumptions");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (error) {
+          console.error('Failed to parse saved assumptions:', error);
+        }
+      }
+    }
+    return defaultAssumptions;
+  });
 
   const [results, setResults] = useState<CalculationResults | null>(null);
 
-
   const updateAssumptions = (newAssumptions: Assumptions) => {
     setAssumptions(newAssumptions);
+  };
+
+  const saveAssumptions = (assumptionsToSave: Assumptions) => {
+    try {
+      localStorage.setItem("tif_model_assumptions", JSON.stringify(assumptionsToSave));
+      setAssumptions(assumptionsToSave);
+    } catch (error) {
+      console.error('Failed to save assumptions:', error);
+    }
   };
 
   const recalculate = () => {
@@ -226,7 +235,7 @@ export function FinancialProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <FinancialContext.Provider value={{ assumptions, results, updateAssumptions, recalculate}}>
+    <FinancialContext.Provider value={{ assumptions, results, updateAssumptions, saveAssumptions, recalculate}}>
       {children}
     </FinancialContext.Provider>
   );

@@ -7,9 +7,10 @@ import InputField from '@/components/InputField';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Assumptions } from '@/types/financial';
 import { useState, useEffect } from 'react';
+import { Save } from 'lucide-react';
 
 export default function AssumptionsPage() {
-  const { assumptions, updateAssumptions, recalculate, results} = useFinancial();
+  const { assumptions, updateAssumptions, saveAssumptions, recalculate, results} = useFinancial();
   const [localAssumptions, setLocalAssumptions] = useState<Assumptions>(assumptions);
 
 
@@ -108,16 +109,11 @@ export default function AssumptionsPage() {
     updateAssumptions(localAssumptions);
     recalculate();
   };
-  //
-//  const handleSave = () => {
-//  updateAssumptions(localAssumptions);
-//  localStorage.setItem("assumptions", JSON.stringify(localAssumptions));
-//};
-//useEffect(() => {
-//  setLocalAssumptions(assumptions);
-//}, [assumptions]);
-//
-//
+
+  const handleSave = () => {
+    saveAssumptions(localAssumptions);
+  };
+
 
 
   return (
@@ -1360,15 +1356,16 @@ export default function AssumptionsPage() {
           </CardContent>
         </Card>
 
-        <div className="flex justify-between items-center gap-4">{/* */}
+        <div className="flex justify-between items-center gap-4">
           <div className="flex gap-4">
             <Button onClick={handleRecalculate} size="lg" className="bg-blue-600 hover:bg-blue-700">
               Recalculate Model
             </Button>
-            {/*<Button 
+            <Button
               onClick={handleSave} size="lg" className='bg-green-600 hover:bg-green-700'>
+              <Save className="mr-2 h-5 w-5" />
               Save Changes
-            </Button>*/}
+            </Button>
             </div>
 
 
